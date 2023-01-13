@@ -1,4 +1,13 @@
-# Build a Kubernetes cluster using k3s via Ansible
+# Build a Kubernetes cluster using k3s using Ansible
+
+
+## Preparing the Raspberry Pis
+
+1. Install Raspberry Pi OS Lite(64-bit) on the SD cards
+2. Set the hostname and the wifinetwork details
+3. Prepare a ssh key and copy the key to the nodes
+4. User should be able to ssh into the nodes using the ssh key
+
 
 
 ## K3s Ansible Playbook
@@ -22,13 +31,7 @@ Master and nodes must have passwordless SSH access
 
 ## Usage
 
-First create a new directory based on the `sample` directory within the `inventory` directory:
-
-```bash
-cp -R inventory/sample inventory/my-cluster
-```
-
-Second, edit `inventory/my-cluster/hosts.ini` to match the system information gathered above. For example:
+- Update the host.ini file in `inventory/nord-pi-cluster` directory.
 
 ```bash
 [master]
@@ -42,7 +45,17 @@ master
 node
 ```
 
-If needed, you can also edit `inventory/my-cluster/group_vars/all.yml` to match your environment.
+- Also edit `inventory/nord-pi-cluster/group_vars/all.yml` to match your environment.
+
+```bash
+---
+k3s_version: v1.22.3+k3s1
+ansible_user: prasanth
+systemd_dir: /etc/systemd/system
+master_ip: "{{ hostvars[groups['master'][0]]['ansible_host'] | default(groups['master'][0]) }}"
+extra_server_args: ""
+extra_agent_args: ""
+```
 
 Start provisioning of the cluster using the following command:
 
